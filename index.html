@@ -323,85 +323,53 @@ function detectPlatform(link) {
   return { name: '未知平台', icon: '❓' };
 }
 
-// cobalt API解析（支持无水印）
-async function tryCobaltAPI(videoUrl) {
-  // 尝试多个cobalt实例
-  const instances = [
-    'https://api.cobalt.tools',
-    'https://cobalt-api.kwiatekmiki.com',
-    'https://cobalt.api.timelessnesses.me',
-  ];
-
-  for (const instance of instances) {
-    try {
-      const resp = await fetch(instance + '/api/json', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          url: videoUrl,
-          vCodec: 'h264',
-          vQuality: '720',
-          aFormat: 'mp3',
-          isAudioOnly: false,
-          noWatermark: true,
-        }),
-      });
-
-      if (!resp.ok) continue;
-      const data = await resp.json();
-
-      if (data.url || data.stream) {
-        return {
-          success: true,
-          downloadUrl: data.url || data.stream,
-          filename: data.filename || 'video.mp4',
-          noWatermark: true,
-          source: 'cobalt',
-        };
-      }
-    } catch (e) { continue; }
-  }
+// TikWM API解析（国内可用，支持TikTok无水印）
+async function tryTikWM(videoUrl) {
+  try {
+    const resp = await fetch('https://www.tikwm.com/api/?url=' + encodeURIComponent(videoUrl) + '&hd=1', {
+      method: 'GET',
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    if (data && data.data && data.data.play) {
+      return {
+        success: true,
+        downloadUrl: data.data.play,
+        filename: (data.data.title || 'tiktok') + '.mp4',
+        noWatermark: true,
+        title: data.data.title,
+        author: data.data.author ? data.data.author.nickname : '',
+        thumbnail: data.data.cover,
+        source: 'TikWM API',
+      };
+    }
+  } catch (e) {}
   return null;
 }
 
-// 尝试通过代理调用cobalt
-async function tryCobaltProxy(videoUrl) {
-  const proxyBase = 'https://api.allorigins.win/raw?url=';
-  const instances = ['https://api.cobalt.tools'];
-
-  for (const instance of instances) {
-    try {
-      const targetUrl = instance + '/api/json';
-      const proxyUrl = proxyBase + encodeURIComponent(targetUrl);
-
-      const resp = await fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: videoUrl,
-          vCodec: 'h264',
-          vQuality: '720',
-          noWatermark: true,
-        }),
-      });
-
-      if (!resp.ok) continue;
-      const data = await resp.json();
-
-      if (data.url || data.stream) {
-        return {
-          success: true,
-          downloadUrl: data.url || data.stream,
-          filename: data.filename || 'video.mp4',
-          noWatermark: true,
-          source: 'cobalt-proxy',
-        };
-      }
-    } catch (e) { continue; }
-  }
+// DLPanda API解析（国内可用，多平台）
+async function tryDLPanda(videoUrl) {
+  try {
+    const resp = await fetch('https://dlpanda.com/api?url=' + encodeURIComponent(videoUrl), {
+      method: 'GET',
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    if (data && data.data && data.data.length > 0) {
+      const item = data.data[0];
+      return {
+        success: true,
+        downloadUrl: item.url || item.video,
+        filename: 'video.mp4',
+        noWatermark: true,
+        title: item.title || '',
+        thumbnail: item.thumbnail || item.cover || '',
+        source: 'DLPanda',
+      };
+    }
+  } catch (e) {}
   return null;
 }
 
@@ -431,43 +399,47 @@ function extractYouTubeId(url) {
   return null;
 }
 
-// 获取下载服务（回退方案）
+// 获取下载服务（回退方案 - 国内可用）
 function getDownloadServices(url, platform) {
   const encoded = encodeURIComponent(url);
   const serviceMap = {
     'YouTube': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '🎬 SnapTik（无水印）', url: 'https://snaptik.app/', primary: true },
+      { name: '📥 SaveTT（无水印）', url: 'https://savett.cc/', secondary: true },
       { name: '📥 ssyoutube', url: 'https://ssyoutube.com/watch?v=' + url },
-      { name: '📥 SaveFrom', url: 'https://en.savefrom.net/1-youtube-video-downloader-5/' },
     ],
     'TikTok': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '📥 SnapTik（无水印）', url: 'https://snaptik.app/' },
+      { name: '🎵 SnapTik（无水印）', url: 'https://snaptik.app/', primary: true },
+      { name: '📥 TikMate（无水印）', url: 'https://tikmate.app/', secondary: true },
+      { name: '📥 SaveTT（无水印）', url: 'https://savett.cc/' },
     ],
     '抖音': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '📥 抖音解析（无水印）', url: 'https://douyin.wtf/' },
+      { name: '🎶 抖音解析（无水印）', url: 'https://douyin.wtf/', primary: true },
+      { name: '📥 SnapTik', url: 'https://snaptik.app/' },
     ],
     'B站': [
-      { name: '🎬 cobalt.tools', url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '📥 B站下载', url: 'https://xbeibeix.com/api/bilibili/' },
+      { name: '📺 B站下载', url: 'https://xbeibeix.com/api/bilibili/', primary: true },
+      { name: '📥 SaveTT', url: 'https://savett.cc/' },
     ],
     '快手': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '🎬 快手解析', url: 'https://snaptik.app/', primary: true },
     ],
     '小红书': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📕 小红书解析', url: 'https://snaptik.app/', primary: true },
     ],
     'Instagram': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '📥 SaveInsta', url: 'https://saveinsta.app/' },
+      { name: '📷 SnapTik（无水印）', url: 'https://snaptik.app/', primary: true },
+      { name: '📥 SaveTT', url: 'https://savett.cc/' },
     ],
     'Twitter/X': [
-      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '🐦 SnapTik', url: 'https://snaptik.app/', primary: true },
+      { name: '📥 SaveTT', url: 'https://savett.cc/' },
     ],
   };
   return serviceMap[platform.name] || [
-    { name: '🎬 cobalt.tools（无水印，支持1000+网站）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+    { name: '🎬 SnapTik（无水印，多平台）', url: 'https://snaptik.app/', primary: true },
+    { name: '📥 SaveTT', url: 'https://savett.cc/', secondary: true },
+    { name: '📥 TikMate', url: 'https://tikmate.app/' },
   ];
 }
 
@@ -496,14 +468,18 @@ async function parseVideo() {
   updateProgress(40, '正在尝试无水印解析...');
   let directResult = null;
 
-  try {
-    directResult = await tryCobaltAPI(url);
-  } catch (e) {}
+  // 优先尝试TikWM（TikTok/抖音专用）
+  if (platform.name === 'TikTok' || platform.name === '抖音') {
+    try {
+      directResult = await tryTikWM(url);
+    } catch (e) {}
+  }
 
+  // 尝试DLPanda（多平台）
   if (!directResult) {
     updateProgress(60, '正在尝试备用解析...');
     try {
-      directResult = await tryCobaltProxy(url);
+      directResult = await tryDLPanda(url);
     } catch (e) {}
   }
 
