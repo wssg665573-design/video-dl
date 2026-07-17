@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视频下载站 - 全平台视频解析下载</title>
+<meta name="description" content="免费在线视频下载，支持YouTube、抖音、B站、TikTok、快手、小红书等全平台">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;--card:#141414;--border:#262626;
+  --text:#fafafa;--text2:#a3a3a3;--accent:#6366f1;
+  --accent2:#818cf8;--green:#22c55e;--red:#ef4899;
+  --radius:16px;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;
+}
+.hero{
+  text-align:center;padding:60px 20px 40px;
+  background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle at 30% 50%,rgba(99,102,241,.15) 0%,transparent 50%),
+             radial-gradient(circle at 70% 50%,rgba(168,85,247,.1) 0%,transparent 50%);
+  animation:pulse 8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.hero h1{
+  font-size:clamp(2.2rem,6vw,3.8rem);font-weight:800;
+  background:linear-gradient(135deg,#6366f1,#a855f7,#ec4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;position:relative;z-index:1;
+}
+.hero p{color:var(--text2);font-size:1.15rem;margin-top:12px;position:relative;z-index:1}
+.container{max-width:860px;margin:0 auto;padding:0 20px;width:100%}
+.search-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:8px;
+  display:flex;gap:8px;margin-bottom:28px;
+  position:relative;z-index:2;
+}
+.search-box input{
+  flex:1;background:transparent;border:none;
+  color:var(--text);font-size:1rem;padding:16px 20px;
+  outline:none;
+}
+.search-box input::placeholder{color:#525252}
+.btn{
+  padding:16px 32px;border:none;border-radius:12px;
+  font-size:1rem;font-weight:600;cursor:pointer;
+  transition:all .25s;white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(135deg,#6366f1,#818cf8);color:white;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(99,102,241,.4)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.platforms{
+  display:flex;flex-wrap:wrap;gap:8px;
+  justify-content:center;margin-bottom:36px;
+}
+.platform-tag{
+  padding:8px 16px;border-radius:999px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text2);font-size:.85rem;transition:all .2s;
+}
+.platform-tag:hover{border-color:var(--accent);color:var(--accent2)}
+/* 结果卡片 */
+.result{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;
+  margin-bottom:24px;display:none;
+  animation:slideUp .4s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.result.show{display:block}
+.result-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.platform-badge{
+  padding:6px 16px;border-radius:8px;
+  background:linear-gradient(135deg,#6366f1,#a855f7);color:white;
+  font-size:.85rem;font-weight:600;
+}
+.result-title{font-size:1.3rem;font-weight:700;line-height:1.5}
+.result-info{color:var(--text2);font-size:.9rem;margin:12px 0 20px}
+.thumbnail{
+  width:100%;max-height:420px;object-fit:cover;
+  border-radius:12px;margin-bottom:20px;
+}
+.download-section{display:flex;flex-direction:column;gap:12px}
+.download-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 20px;border-radius:12px;text-decoration:none;
+  font-weight:600;font-size:1rem;transition:all .25s;
+  border:1px solid var(--border);color:var(--text);
+}
+.download-btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.download-btn.primary{
+  background:linear-gradient(135deg,#6366f1,#818cf8);
+  color:white;border-color:transparent;
+}
+.download-btn.primary:hover{box-shadow:0 8px 25px rgba(99,102,241,.4)}
+/* 加载 */
+.loading{display:none;text-align:center;padding:48px}
+.loading.show{display:block}
+.spinner{
+  width:44px;height:44px;border:3px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* 错误 */
+.error-msg{
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);
+  border-radius:12px;padding:20px;color:#f87171;
+  display:none;text-align:center;
+}
+.error-msg.show{display:block}
+/* 特性 */
+.features{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;margin-bottom:40px;
+}
+.feature{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:24px 16px;text-align:center;
+  transition:all .25s;
+}
+.feature:hover{border-color:var(--accent);transform:translateY(-4px)}
+.feature-icon{font-size:2.2rem;margin-bottom:10px}
+.feature-title{font-weight:700;margin-bottom:6px;font-size:1rem}
+.feature-desc{color:var(--text2);font-size:.82rem;line-height:1.5}
+/* 使用说明 */
+.howto{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;margin-bottom:40px;
+}
+.howto h3{margin-bottom:16px;font-size:1.1rem}
+.steps{display:flex;flex-direction:column;gap:14px}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{
+  min-width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#6366f1,#a855f7);
+  color:white;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.9rem;
+}
+.step-text{color:var(--text2);font-size:.9rem;line-height:1.6;padding-top:4px}
+.footer{
+  text-align:center;padding:40px 20px;color:#525252;
+  font-size:.82rem;margin-top:auto;
+}
+.footer a{color:var(--accent2);text-decoration:none}
+@media(max-width:640px){
+  .search-box{flex-direction:column}
+  .btn{width:100%}
+  .hero{padding:40px 16px 28px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>📹 视频下载站</h1>
+  <p>全平台视频解析下载 · 免费 · 无需注册 · 极速</p>
+</div>
+
+<div class="container">
+  <div class="platforms">
+    <span class="platform-tag">YouTube</span>
+    <span class="platform-tag">抖音</span>
+    <span class="platform-tag">B站</span>
+    <span class="platform-tag">TikTok</span>
+    <span class="platform-tag">快手</span>
+    <span class="platform-tag">小红书</span>
+    <span class="platform-tag">微博</span>
+    <span class="platform-tag">Instagram</span>
+    <span class="platform-tag">Twitter/X</span>
+    <span class="platform-tag">Facebook</span>
+    <span class="platform-tag">Vimeo</span>
+    <span class="platform-tag">更多...</span>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="urlInput" placeholder="粘贴视频链接，如 https://www.youtube.com/watch?v=..." autocomplete="off">
+    <button class="btn btn-primary" id="parseBtn" onclick="parseVideo()">🔍 解析下载</button>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>正在解析视频，请稍候...</p>
+  </div>
+
+  <div class="error-msg" id="error"></div>
+
+  <div class="result" id="result">
+    <div class="result-header">
+      <span class="platform-badge" id="platformBadge"></span>
+    </div>
+    <img class="thumbnail" id="thumbnail" style="display:none" alt="视频封面">
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-info" id="resultInfo"></div>
+    <div class="download-section" id="downloadSection"></div>
+  </div>
+
+  <div class="howto">
+    <h3>📖 使用说明</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">复制你想要下载的视频链接（从浏览器地址栏或APP分享）</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">粘贴到上方输入框，点击"解析下载"</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">等待解析完成，选择下载服务即可保存视频</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">🌐</div>
+      <div class="feature-title">全平台覆盖</div>
+      <div class="feature-desc">YouTube、抖音、B站、TikTok等10+平台</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">极速解析</div>
+      <div class="feature-desc">云端解析引擎，秒级响应</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">安全免费</div>
+      <div class="feature-desc">无需注册登录，完全免费使用</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📱</div>
+      <div class="feature-title">全端适配</div>
+      <div class="feature-desc">手机、平板、电脑完美适配</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>本工具仅供学习交流使用，请勿用于商业用途 · 视频版权归原创作者所有</p>
+  <p style="margin-top:6px">Powered by <a href="#">Video Download Site</a></p>
+</div>
+
+<script>
+const urlInput = document.getElementById('urlInput');
+const parseBtn = document.getElementById('parseBtn');
+const loadingEl = document.getElementById('loading');
+const errorEl = document.getElementById('error');
+const resultEl = document.getElementById('result');
+
+// 回车触发
+urlInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') parseVideo();
+});
+
+// 粘贴自动解析
+urlInput.addEventListener('paste', () => {
+  setTimeout(() => {
+    if (urlInput.value.trim()) parseVideo();
+  }, 150);
+});
+
+// 平台检测
+function detectPlatform(link) {
+  const platforms = [
+    { name: 'YouTube', icon: '🔴', patterns: ['youtube.com', 'youtu.be', 'yt.be'] },
+    { name: 'TikTok', icon: '🎵', patterns: ['tiktok.com', 'vm.tiktok.com'] },
+    { name: '抖音', icon: '🎶', patterns: ['douyin.com', 'v.douyin.com'] },
+    { name: 'B站', icon: '📺', patterns: ['bilibili.com', 'b23.tv'] },
+    { name: '快手', icon: '🎬', patterns: ['kuaishou.com', 'v.kuaishou.com'] },
+    { name: '小红书', icon: '📕', patterns: ['xiaohongshu.com', 'xhslink.com'] },
+    { name: '微博', icon: '🔷', patterns: ['weibo.com', 'm.weibo.cn'] },
+    { name: 'Instagram', icon: '📷', patterns: ['instagram.com', 'instagr.am'] },
+    { name: 'Twitter/X', icon: '🐦', patterns: ['twitter.com', 'x.com', 't.co'] },
+    { name: 'Facebook', icon: '👤', patterns: ['facebook.com', 'fb.com', 'fb.watch'] },
+    { name: 'Pinterest', icon: '📌', patterns: ['pinterest.com', 'pin.it'] },
+    { name: 'Reddit', icon: '🤖', patterns: ['reddit.com', 'redd.it'] },
+    { name: 'Vimeo', icon: '🎥', patterns: ['vimeo.com'] },
+    { name: 'Dailymotion', icon: '📹', patterns: ['dailymotion.com', 'dai.ly'] },
+  ];
+
+  const lower = link.toLowerCase();
+  for (const p of platforms) {
+    if (p.patterns.some((pat) => lower.includes(pat))) return p;
+  }
+  return { name: '未知平台', icon: '❓', patterns: [] };
+}
+
+// YouTube ID提取
+function extractYouTubeId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+// 解析主函数
+async function parseVideo() {
+  const url = urlInput.value.trim();
+  if (!url) { showError('请输入视频链接'); return; }
+  if (!url.startsWith('http')) { showError('请输入有效的链接（以http/https开头）'); return; }
+
+  hideAll();
+  loadingEl.classList.add('show');
+  parseBtn.disabled = true;
+
+  const platform = detectPlatform(url);
+  const services = getDownloadServices(url, platform);
+
+  // 模拟解析延迟（给用户反馈感）
+  await new Promise(r => setTimeout(r, 800 + Math.random() * 500));
+
+  // 尝试获取视频信息
+  let videoInfo = null;
+  if (platform.name === 'YouTube') {
+    videoInfo = await fetchYouTubeInfo(url);
+  }
+
+  showResult(platform, videoInfo, services);
+  loadingEl.classList.remove('show');
+  parseBtn.disabled = false;
+}
+
+// 获取YouTube视频信息
+async function fetchYouTubeInfo(url) {
+  const videoId = extractYouTubeId(url);
+  if (!videoId) return null;
+
+  try {
+    const resp = await fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + videoId);
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return {
+      title: data.title,
+      author: data.author_name,
+      thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg',
+    };
+  } catch { return null; }
+}
+
+// 获取下载服务列表
+function getDownloadServices(url, platform) {
+  const encoded = encodeURIComponent(url);
+
+  // 各平台对应的下载服务
+  const serviceMap = {
+    'YouTube': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 ssyoutube', url: 'https://ssyoutube.com/watch?v=' + url },
+      { name: '📥 y2mate', url: 'https://www.y2mate.com/youtube/' + extractYouTubeId(url) },
+      { name: '📥 SaveFrom', url: 'https://en.savefrom.net/1-youtube-video-downloader-5/' },
+    ],
+    'TikTok': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 SnapTik', url: 'https://snaptik.app/' },
+      { name: '📥 TikMate', url: 'https://tikmate.app/' },
+    ],
+    '抖音': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 抖音解析', url: 'https://douyin.wtf/' },
+      { name: '📥 逗音下载', url: 'https://www.douyinvideo.com/' },
+    ],
+    'B站': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 B站下载', url: 'https://xbeibeix.com/api/bilibili/' },
+      { name: '📥 VideoDown', url: 'https://www.videodownloader.online/' },
+    ],
+    '快手': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 快手下载', url: 'https://www.kuaishouvideo.com/' },
+    ],
+    '小红书': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 小红书解析', url: 'https://www.xiaohongshuvideo.com/' },
+    ],
+    '微博': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 微博视频', url: 'https://www.weibovideo.com/' },
+    ],
+    'Instagram': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 SaveInsta', url: 'https://saveinsta.app/' },
+      { name: '📥 InstaDownloader', url: 'https://instadownloader.co/' },
+    ],
+    'Twitter/X': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 TwitterVideo', url: 'https://twittervideodownloader.com/' },
+      { name: '📥 SaveTweet', url: 'https://savetweetvid.com/' },
+    ],
+    'Facebook': [
+      { name: '🎬 cobalt.tools（推荐）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 FbDownloader', url: 'https://fdown.net/' },
+    ],
+  };
+
+  return serviceMap[platform.name] || [
+    { name: '🎬 cobalt.tools（推荐，支持1000+网站）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+    { name: '📥 VideoDown', url: 'https://www.videodownloader.online/', primary: false },
+  ];
+}
+
+function showResult(platform, videoInfo, services) {
+  document.getElementById('platformBadge').textContent = platform.icon + ' ' + platform.name;
+
+  const titleEl = document.getElementById('resultTitle');
+  const thumbEl = document.getElementById('thumbnail');
+  const infoEl = document.getElementById('resultInfo');
+
+  if (videoInfo) {
+    titleEl.textContent = videoInfo.title || platform.name + ' 视频';
+    if (videoInfo.thumbnail) {
+      thumbEl.src = videoInfo.thumbnail;
+      thumbEl.style.display = 'block';
+    }
+    infoEl.textContent = videoInfo.author ? '作者: ' + videoInfo.author : '';
+  } else {
+    titleEl.textContent = platform.name + ' 视频';
+    thumbEl.style.display = 'none';
+    infoEl.textContent = '已检测到链接，选择下方服务下载';
+  }
+
+  const section = document.getElementById('downloadSection');
+  section.innerHTML = '';
+
+  services.forEach((s) => {
+    const a = document.createElement('a');
+    a.className = 'download-btn' + (s.primary ? ' primary' : '');
+    a.href = s.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = s.name;
+    section.appendChild(a);
+  });
+
+  // 添加说明
+  const note = document.createElement('p');
+  note.style.cssText = 'color:var(--text2);font-size:.82rem;text-align:center;margin-top:14px;line-height:1.5';
+  note.textContent = '💡 提示：部分平台可能需要在新打开的页面中粘贴链接进行解析';
+  section.appendChild(note);
+
+  resultEl.classList.add('show');
+}
+
+function showError(msg) {
+  errorEl.textContent = '⚠️ ' + msg;
+  errorEl.classList.add('show');
+}
+
+function hideAll() {
+  loadingEl.classList.remove('show');
+  errorEl.classList.remove('show');
+  resultEl.classList.remove('show');
+}
+</script>
+</body>
+</html>
