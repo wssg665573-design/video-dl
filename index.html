@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>瑙嗛涓嬭浇绔?- 鍏ㄥ钩鍙版棤姘村嵃瑙嗛涓嬭浇</title>
-<meta name="description" content="鍏嶈垂鍦ㄧ嚎鏃犳按鍗拌棰戜笅杞斤紝鏀寔YouTube銆佹姈闊炽€丅绔欍€乀ikTok銆佸揩鎵嬨€佸皬绾功绛夊叏骞冲彴">
+<title>视频下载站 - 全平台无水印视频下载</title>
+<meta name="description" content="免费在线无水印视频下载，支持YouTube、抖音、B站、TikTok、快手、小红书等全平台">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -76,7 +76,7 @@ body{
   color:var(--text2);font-size:.85rem;transition:all .2s;
 }
 .platform-tag:hover{border-color:var(--accent);color:var(--accent2)}
-/* 缁撴灉鍗＄墖 */
+/* 结果卡片 */
 .result{
   background:var(--card);border:1px solid var(--border);
   border-radius:var(--radius);padding:28px;
@@ -124,7 +124,7 @@ body{
   color:white;border-color:transparent;
 }
 .download-btn.secondary:hover{box-shadow:0 8px 25px rgba(99,102,241,.4)}
-/* 杩涘害鏉?*/
+/* 进度条 */
 .progress-bar{
   width:100%;height:4px;background:var(--border);border-radius:2px;
   overflow:hidden;margin:12px 0;
@@ -133,7 +133,7 @@ body{
   height:100%;background:linear-gradient(90deg,#6366f1,#a855f7);
   border-radius:2px;transition:width .3s ease;width:0%;
 }
-/* 鍔犺浇 */
+/* 加载 */
 .loading{display:none;text-align:center;padding:48px}
 .loading.show{display:block}
 .spinner{
@@ -143,14 +143,14 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-status{color:var(--text2);font-size:.9rem}
-/* 閿欒 */
+/* 错误 */
 .error-msg{
   background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);
   border-radius:12px;padding:20px;color:#f87171;
   display:none;text-align:center;
 }
 .error-msg.show{display:block}
-/* 鐗规€?*/
+/* 特性 */
 .features{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:16px;margin-bottom:40px;
@@ -164,7 +164,7 @@ body{
 .feature-icon{font-size:2.2rem;margin-bottom:10px}
 .feature-title{font-weight:700;margin-bottom:6px;font-size:1rem}
 .feature-desc{color:var(--text2);font-size:.82rem;line-height:1.5}
-/* 浣跨敤璇存槑 */
+/* 使用说明 */
 .howto{
   background:var(--card);border:1px solid var(--border);
   border-radius:var(--radius);padding:28px;margin-bottom:40px;
@@ -194,35 +194,35 @@ body{
 <body>
 
 <div class="hero">
-  <h1>馃摴 瑙嗛涓嬭浇绔?/h1>
-  <p>鍏ㄥ钩鍙拌棰戣В鏋愪笅杞?路 鍏嶈垂 路 鏃犻渶娉ㄥ唽 路 鏋侀€?/p>
-  <span class="badge-no-watermark">鉁?鏀寔鏃犳按鍗颁笅杞?/span>
+  <h1>📹 视频下载站</h1>
+  <p>全平台视频解析下载 · 免费 · 无需注册 · 极速</p>
+  <span class="badge-no-watermark">✅ 支持无水印下载</span>
 </div>
 
 <div class="container">
   <div class="platforms">
     <span class="platform-tag">YouTube</span>
-    <span class="platform-tag">鎶栭煶</span>
-    <span class="platform-tag">B绔?/span>
+    <span class="platform-tag">抖音</span>
+    <span class="platform-tag">B站</span>
     <span class="platform-tag">TikTok</span>
-    <span class="platform-tag">蹇墜</span>
-    <span class="platform-tag">灏忕孩涔?/span>
-    <span class="platform-tag">寰崥</span>
+    <span class="platform-tag">快手</span>
+    <span class="platform-tag">小红书</span>
+    <span class="platform-tag">微博</span>
     <span class="platform-tag">Instagram</span>
     <span class="platform-tag">Twitter/X</span>
     <span class="platform-tag">Facebook</span>
     <span class="platform-tag">Vimeo</span>
-    <span class="platform-tag">鏇村...</span>
+    <span class="platform-tag">更多...</span>
   </div>
 
   <div class="search-box">
-    <input type="text" id="urlInput" placeholder="绮樿创瑙嗛閾炬帴锛屽 https://www.youtube.com/watch?v=..." autocomplete="off">
-    <button class="btn btn-primary" id="parseBtn" onclick="parseVideo()">馃攳 鏃犳按鍗拌В鏋?/button>
+    <input type="text" id="urlInput" placeholder="粘贴视频链接，如 https://www.youtube.com/watch?v=..." autocomplete="off">
+    <button class="btn btn-primary" id="parseBtn" onclick="parseVideo()">🔍 无水印解析</button>
   </div>
 
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <p class="loading-status" id="loadingStatus">姝ｅ湪瑙ｆ瀽瑙嗛...</p>
+    <p class="loading-status" id="loadingStatus">正在解析视频...</p>
     <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
   </div>
 
@@ -231,9 +231,9 @@ body{
   <div class="result" id="result">
     <div class="result-header">
       <span class="platform-badge" id="platformBadge"></span>
-      <span class="nowatermark-badge" id="nowatermarkBadge" style="display:none">鉁?鏃犳按鍗?/span>
+      <span class="nowatermark-badge" id="nowatermarkBadge" style="display:none">✅ 无水印</span>
     </div>
-    <img class="thumbnail" id="thumbnail" style="display:none" alt="瑙嗛灏侀潰">
+    <img class="thumbnail" id="thumbnail" style="display:none" alt="视频封面">
     <video class="video-preview" id="videoPreview" style="display:none" controls></video>
     <div class="result-title" id="resultTitle"></div>
     <div class="result-info" id="resultInfo"></div>
@@ -241,49 +241,49 @@ body{
   </div>
 
   <div class="howto">
-    <h3>馃摉 浣跨敤璇存槑</h3>
+    <h3>📖 使用说明</h3>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text">澶嶅埗浣犳兂瑕佷笅杞界殑瑙嗛閾炬帴锛堜粠娴忚鍣ㄥ湴鍧€鏍忔垨APP鍒嗕韩锛?/div>
+        <div class="step-text">复制你想要下载的视频链接（从浏览器地址栏或APP分享）</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-text">绮樿创鍒颁笂鏂硅緭鍏ユ锛岀偣鍑?鏃犳按鍗拌В鏋?</div>
+        <div class="step-text">粘贴到上方输入框，点击"无水印解析"</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-text">绛夊緟瑙ｆ瀽瀹屾垚锛岀偣鍑讳笅杞芥寜閽繚瀛樻棤姘村嵃瑙嗛鍒版湰鍦?/div>
+        <div class="step-text">等待解析完成，点击下载按钮保存无水印视频到本地</div>
       </div>
     </div>
   </div>
 
   <div class="features">
     <div class="feature">
-      <div class="feature-icon">馃毇馃挧</div>
-      <div class="feature-title">鏃犳按鍗颁笅杞?/div>
-      <div class="feature-desc">鎶栭煶銆乀ikTok绛夊钩鍙扮洿鎺ュ幓姘村嵃</div>
+      <div class="feature-icon">🚫💧</div>
+      <div class="feature-title">无水印下载</div>
+      <div class="feature-desc">抖音、TikTok等平台直接去水印</div>
     </div>
     <div class="feature">
-      <div class="feature-icon">馃寪</div>
-      <div class="feature-title">鍏ㄥ钩鍙拌鐩?/div>
-      <div class="feature-desc">YouTube銆佹姈闊炽€丅绔欍€乀ikTok绛?0+骞冲彴</div>
+      <div class="feature-icon">🌐</div>
+      <div class="feature-title">全平台覆盖</div>
+      <div class="feature-desc">YouTube、抖音、B站、TikTok等10+平台</div>
     </div>
     <div class="feature">
-      <div class="feature-icon">鈿?/div>
-      <div class="feature-title">鏋侀€熻В鏋?/div>
-      <div class="feature-desc">浜戠瑙ｆ瀽寮曟搸锛岀绾у搷搴?/div>
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">极速解析</div>
+      <div class="feature-desc">云端解析引擎，秒级响应</div>
     </div>
     <div class="feature">
-      <div class="feature-icon">馃敀</div>
-      <div class="feature-title">瀹夊叏鍏嶈垂</div>
-      <div class="feature-desc">鏃犻渶娉ㄥ唽鐧诲綍锛屽畬鍏ㄥ厤璐逛娇鐢?/div>
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">安全免费</div>
+      <div class="feature-desc">无需注册登录，完全免费使用</div>
     </div>
   </div>
 </div>
 
 <div class="footer">
-  <p>鏈伐鍏蜂粎渚涘涔犱氦娴佷娇鐢紝璇峰嬁鐢ㄤ簬鍟嗕笟鐢ㄩ€?路 瑙嗛鐗堟潈褰掑師鍒涗綔鑰呮墍鏈?/p>
+  <p>本工具仅供学习交流使用，请勿用于商业用途 · 视频版权归原创作者所有</p>
 </div>
 
 <script>
@@ -298,32 +298,34 @@ const resultEl = document.getElementById('result');
 urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') parseVideo(); });
 urlInput.addEventListener('paste', () => { setTimeout(() => { if (urlInput.value.trim()) parseVideo(); }, 150); });
 
-// 骞冲彴妫€娴?function detectPlatform(link) {
+// 平台检测
+function detectPlatform(link) {
   const platforms = [
-    { name: 'YouTube', icon: '馃敶', patterns: ['youtube.com', 'youtu.be', 'yt.be'] },
-    { name: 'TikTok', icon: '馃幍', patterns: ['tiktok.com', 'vm.tiktok.com'] },
-    { name: '鎶栭煶', icon: '馃幎', patterns: ['douyin.com', 'v.douyin.com'] },
-    { name: 'B绔?, icon: '馃摵', patterns: ['bilibili.com', 'b23.tv'] },
-    { name: '蹇墜', icon: '馃幀', patterns: ['kuaishou.com', 'v.kuaishou.com'] },
-    { name: '灏忕孩涔?, icon: '馃摃', patterns: ['xiaohongshu.com', 'xhslink.com'] },
-    { name: '寰崥', icon: '馃敺', patterns: ['weibo.com', 'm.weibo.cn'] },
-    { name: 'Instagram', icon: '馃摲', patterns: ['instagram.com', 'instagr.am'] },
-    { name: 'Twitter/X', icon: '馃惁', patterns: ['twitter.com', 'x.com', 't.co'] },
-    { name: 'Facebook', icon: '馃懁', patterns: ['facebook.com', 'fb.com', 'fb.watch'] },
-    { name: 'Pinterest', icon: '馃搶', patterns: ['pinterest.com', 'pin.it'] },
-    { name: 'Reddit', icon: '馃', patterns: ['reddit.com', 'redd.it'] },
-    { name: 'Vimeo', icon: '馃帴', patterns: ['vimeo.com'] },
-    { name: 'Dailymotion', icon: '馃摴', patterns: ['dailymotion.com', 'dai.ly'] },
+    { name: 'YouTube', icon: '🔴', patterns: ['youtube.com', 'youtu.be', 'yt.be'] },
+    { name: 'TikTok', icon: '🎵', patterns: ['tiktok.com', 'vm.tiktok.com'] },
+    { name: '抖音', icon: '🎶', patterns: ['douyin.com', 'v.douyin.com'] },
+    { name: 'B站', icon: '📺', patterns: ['bilibili.com', 'b23.tv'] },
+    { name: '快手', icon: '🎬', patterns: ['kuaishou.com', 'v.kuaishou.com'] },
+    { name: '小红书', icon: '📕', patterns: ['xiaohongshu.com', 'xhslink.com'] },
+    { name: '微博', icon: '🔷', patterns: ['weibo.com', 'm.weibo.cn'] },
+    { name: 'Instagram', icon: '📷', patterns: ['instagram.com', 'instagr.am'] },
+    { name: 'Twitter/X', icon: '🐦', patterns: ['twitter.com', 'x.com', 't.co'] },
+    { name: 'Facebook', icon: '👤', patterns: ['facebook.com', 'fb.com', 'fb.watch'] },
+    { name: 'Pinterest', icon: '📌', patterns: ['pinterest.com', 'pin.it'] },
+    { name: 'Reddit', icon: '🤖', patterns: ['reddit.com', 'redd.it'] },
+    { name: 'Vimeo', icon: '🎥', patterns: ['vimeo.com'] },
+    { name: 'Dailymotion', icon: '📹', patterns: ['dailymotion.com', 'dai.ly'] },
   ];
   const lower = link.toLowerCase();
   for (const p of platforms) {
     if (p.patterns.some((pat) => lower.includes(pat))) return p;
   }
-  return { name: '鏈煡骞冲彴', icon: '鉂? };
+  return { name: '未知平台', icon: '❓' };
 }
 
-// cobalt API瑙ｆ瀽锛堟敮鎸佹棤姘村嵃锛?async function tryCobaltAPI(videoUrl) {
-  // 灏濊瘯澶氫釜cobalt瀹炰緥
+// cobalt API解析（支持无水印）
+async function tryCobaltAPI(videoUrl) {
+  // 尝试多个cobalt实例
   const instances = [
     'https://api.cobalt.tools',
     'https://cobalt-api.kwiatekmiki.com',
@@ -365,7 +367,7 @@ urlInput.addEventListener('paste', () => { setTimeout(() => { if (urlInput.value
   return null;
 }
 
-// 灏濊瘯閫氳繃浠ｇ悊璋冪敤cobalt
+// 尝试通过代理调用cobalt
 async function tryCobaltProxy(videoUrl) {
   const proxyBase = 'https://api.allorigins.win/raw?url=';
   const instances = ['https://api.cobalt.tools'];
@@ -403,7 +405,7 @@ async function tryCobaltProxy(videoUrl) {
   return null;
 }
 
-// YouTube淇℃伅鑾峰彇
+// YouTube信息获取
 async function fetchYouTubeInfo(videoId) {
   try {
     const resp = await fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + videoId);
@@ -429,66 +431,69 @@ function extractYouTubeId(url) {
   return null;
 }
 
-// 鑾峰彇涓嬭浇鏈嶅姟锛堝洖閫€鏂规锛?function getDownloadServices(url, platform) {
+// 获取下载服务（回退方案）
+function getDownloadServices(url, platform) {
   const encoded = encodeURIComponent(url);
   const serviceMap = {
     'YouTube': [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '馃摜 ssyoutube', url: 'https://ssyoutube.com/watch?v=' + url },
-      { name: '馃摜 SaveFrom', url: 'https://en.savefrom.net/1-youtube-video-downloader-5/' },
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 ssyoutube', url: 'https://ssyoutube.com/watch?v=' + url },
+      { name: '📥 SaveFrom', url: 'https://en.savefrom.net/1-youtube-video-downloader-5/' },
     ],
     'TikTok': [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '馃摜 SnapTik锛堟棤姘村嵃锛?, url: 'https://snaptik.app/' },
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 SnapTik（无水印）', url: 'https://snaptik.app/' },
     ],
-    '鎶栭煶': [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '馃摜 鎶栭煶瑙ｆ瀽锛堟棤姘村嵃锛?, url: 'https://douyin.wtf/' },
+    '抖音': [
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 抖音解析（无水印）', url: 'https://douyin.wtf/' },
     ],
-    'B绔?: [
-      { name: '馃幀 cobalt.tools', url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '馃摜 B绔欎笅杞?, url: 'https://xbeibeix.com/api/bilibili/' },
+    'B站': [
+      { name: '🎬 cobalt.tools', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 B站下载', url: 'https://xbeibeix.com/api/bilibili/' },
     ],
-    '蹇墜': [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
+    '快手': [
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
     ],
-    '灏忕孩涔?: [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
+    '小红书': [
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
     ],
     'Instagram': [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
-      { name: '馃摜 SaveInsta', url: 'https://saveinsta.app/' },
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '📥 SaveInsta', url: 'https://saveinsta.app/' },
     ],
     'Twitter/X': [
-      { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
+      { name: '🎬 cobalt.tools（无水印）', url: 'https://cobalt.tools/#' + encoded, primary: true },
     ],
   };
   return serviceMap[platform.name] || [
-    { name: '馃幀 cobalt.tools锛堟棤姘村嵃锛屾敮鎸?000+缃戠珯锛?, url: 'https://cobalt.tools/#' + encoded, primary: true },
+    { name: '🎬 cobalt.tools（无水印，支持1000+网站）', url: 'https://cobalt.tools/#' + encoded, primary: true },
   ];
 }
 
-// 涓昏В鏋愬嚱鏁?async function parseVideo() {
+// 主解析函数
+async function parseVideo() {
   const url = urlInput.value.trim();
-  if (!url) { showError('璇疯緭鍏ヨ棰戦摼鎺?); return; }
-  if (!url.startsWith('http')) { showError('璇疯緭鍏ユ湁鏁堢殑閾炬帴锛堜互http/https寮€澶达級'); return; }
+  if (!url) { showError('请输入视频链接'); return; }
+  if (!url.startsWith('http')) { showError('请输入有效的链接（以http/https开头）'); return; }
 
   hideAll();
   loadingEl.classList.add('show');
   parseBtn.disabled = true;
 
   const platform = detectPlatform(url);
-  updateProgress(10, '姝ｅ湪璇嗗埆骞冲彴...');
+  updateProgress(10, '正在识别平台...');
 
-  // 鑾峰彇瑙嗛鍩烘湰淇℃伅
+  // 获取视频基本信息
   let videoInfo = null;
   if (platform.name === 'YouTube') {
-    updateProgress(20, '姝ｅ湪鑾峰彇瑙嗛淇℃伅...');
+    updateProgress(20, '正在获取视频信息...');
     const videoId = extractYouTubeId(url);
     if (videoId) videoInfo = await fetchYouTubeInfo(videoId);
   }
 
-  // 灏濊瘯鐩存帴瑙ｆ瀽锛堟棤姘村嵃锛?  updateProgress(40, '姝ｅ湪灏濊瘯鏃犳按鍗拌В鏋?..');
+  // 尝试直接解析（无水印）
+  updateProgress(40, '正在尝试无水印解析...');
   let directResult = null;
 
   try {
@@ -496,18 +501,18 @@ function extractYouTubeId(url) {
   } catch (e) {}
 
   if (!directResult) {
-    updateProgress(60, '姝ｅ湪灏濊瘯澶囩敤瑙ｆ瀽...');
+    updateProgress(60, '正在尝试备用解析...');
     try {
       directResult = await tryCobaltProxy(url);
     } catch (e) {}
   }
 
   if (directResult && directResult.success) {
-    updateProgress(100, '瑙ｆ瀽瀹屾垚锛?);
+    updateProgress(100, '解析完成！');
     await new Promise(r => setTimeout(r, 300));
     showDirectResult(platform, videoInfo, directResult);
   } else {
-    updateProgress(100, '璺宠浆鑷充笅杞芥湇鍔?..');
+    updateProgress(100, '跳转至下载服务...');
     await new Promise(r => setTimeout(r, 300));
     const services = getDownloadServices(url, platform);
     showFallbackResult(platform, videoInfo, services);
@@ -522,7 +527,8 @@ function updateProgress(percent, status) {
   loadingStatus.textContent = status;
 }
 
-// 鐩存帴瑙ｆ瀽缁撴灉锛堟棤姘村嵃涓嬭浇锛?function showDirectResult(platform, videoInfo, result) {
+// 直接解析结果（无水印下载）
+function showDirectResult(platform, videoInfo, result) {
   document.getElementById('platformBadge').textContent = platform.icon + ' ' + platform.name;
   document.getElementById('nowatermarkBadge').style.display = 'inline-block';
 
@@ -531,14 +537,14 @@ function updateProgress(percent, status) {
   const videoEl = document.getElementById('videoPreview');
   const infoEl = document.getElementById('resultInfo');
 
-  titleEl.textContent = (videoInfo && videoInfo.title) || platform.name + ' 瑙嗛';
+  titleEl.textContent = (videoInfo && videoInfo.title) || platform.name + ' 视频';
 
   if (videoInfo && videoInfo.thumbnail) {
     thumbEl.src = videoInfo.thumbnail;
     thumbEl.style.display = 'block';
   }
 
-  // 灏濊瘯鍐呭祵瑙嗛棰勮
+  // 尝试内嵌视频预览
   if (result.downloadUrl) {
     videoEl.src = result.downloadUrl;
     videoEl.style.display = 'block';
@@ -546,8 +552,8 @@ function updateProgress(percent, status) {
   }
 
   let info = '';
-  if (videoInfo && videoInfo.author) info += '浣滆€? ' + videoInfo.author + ' 路 ';
-  info += '鐢昏川: 720p 路 鏉ユ簮: ' + result.source;
+  if (videoInfo && videoInfo.author) info += '作者: ' + videoInfo.author + ' · ';
+  info += '画质: 720p · 来源: ' + result.source;
   infoEl.textContent = info;
 
   const section = document.getElementById('downloadSection');
@@ -560,19 +566,19 @@ function updateProgress(percent, status) {
     a.download = result.filename || 'video.mp4';
     a.target = '_blank';
     a.rel = 'noopener';
-    a.textContent = '猬囷笍 鏃犳按鍗颁笅杞斤紙鐩存帴淇濆瓨锛?;
+    a.textContent = '⬇️ 无水印下载（直接保存）';
     section.appendChild(a);
   }
 
   const note = document.createElement('p');
   note.style.cssText = 'color:var(--text2);font-size:.82rem;text-align:center;margin-top:14px;line-height:1.5';
-  note.textContent = '馃挕 濡傛灉涓嬭浇鎸夐挳鏃犳晥锛岃灏濊瘯鍙抽敭瑙嗛 鈫?"鍙﹀瓨涓?';
+  note.textContent = '💡 如果下载按钮无效，请尝试右键视频 → "另存为"';
   section.appendChild(note);
 
   resultEl.classList.add('show');
 }
 
-// 鍥為€€鏂规缁撴灉
+// 回退方案结果
 function showFallbackResult(platform, videoInfo, services) {
   document.getElementById('platformBadge').textContent = platform.icon + ' ' + platform.name;
   document.getElementById('nowatermarkBadge').style.display = 'none';
@@ -585,16 +591,16 @@ function showFallbackResult(platform, videoInfo, services) {
   videoEl.style.display = 'none';
 
   if (videoInfo) {
-    titleEl.textContent = videoInfo.title || platform.name + ' 瑙嗛';
+    titleEl.textContent = videoInfo.title || platform.name + ' 视频';
     if (videoInfo.thumbnail) {
       thumbEl.src = videoInfo.thumbnail;
       thumbEl.style.display = 'block';
     }
-    infoEl.textContent = videoInfo.author ? '浣滆€? ' + videoInfo.author : '';
+    infoEl.textContent = videoInfo.author ? '作者: ' + videoInfo.author : '';
   } else {
-    titleEl.textContent = platform.name + ' 瑙嗛';
+    titleEl.textContent = platform.name + ' 视频';
     thumbEl.style.display = 'none';
-    infoEl.textContent = '宸叉娴嬪埌閾炬帴锛岄€夋嫨涓嬫柟鏈嶅姟杩涜鏃犳按鍗颁笅杞?;
+    infoEl.textContent = '已检测到链接，选择下方服务进行无水印下载';
   }
 
   const section = document.getElementById('downloadSection');
@@ -612,14 +618,14 @@ function showFallbackResult(platform, videoInfo, services) {
 
   const note = document.createElement('p');
   note.style.cssText = 'color:var(--text2);font-size:.82rem;text-align:center;margin-top:14px;line-height:1.5';
-  note.textContent = '馃挕 閮ㄥ垎骞冲彴闇€瑕佸湪鏂伴〉闈㈢矘璐撮摼鎺ヨ繘琛岃В鏋愶紝cobalt.tools 鍏ㄧ▼鏃犳按鍗?;
+  note.textContent = '💡 部分平台需要在新页面粘贴链接进行解析，cobalt.tools 全程无水印';
   section.appendChild(note);
 
   resultEl.classList.add('show');
 }
 
 function showError(msg) {
-  errorEl.textContent = '鈿狅笍 ' + msg;
+  errorEl.textContent = '⚠️ ' + msg;
   errorEl.classList.add('show');
 }
 
